@@ -14,14 +14,15 @@ entity decoder is
 end decoder;
 
 ARCHITECTURE Behavioral OF decoder IS
-      signal check      : std_logic_vector(2 downto 0);
-      signal temp       : std_logic_vector(6 downto 0);
-      signal temp_out   : std_logic_vector(3 downto 0);
-      signal parity     : std_logic;
+
 
 BEGIN
 -- cyclic register with taps
-PROCESS(clk)
+PROCESS(data_in)
+variable check      : std_logic_vector(2 downto 0);
+variable temp       : std_logic_vector(6 downto 0);
+variable temp_out   : std_logic_vector(3 downto 0);
+variable parity     : std_logic;
   variable check_value : integer;
   variable counter : integer := 0;
 
@@ -32,26 +33,26 @@ BEGIN
 --if counter mod 3 = 2  and work = '1' then
   --print("dc " & str(counter));
 
-  check(2) <= data_in(7) xor data_in(6) xor data_in(5) xor data_in(4);
-  check(1) <= data_in(7) xor data_in(6) xor data_in(3) xor data_in(2);
-  check(0) <= data_in(7) xor data_in(5) xor data_in(3) xor data_in(1);
-  parity <= data_in(0) xor data_in(1) xor data_in(2) xor data_in(3) xor data_in(4) xor data_in(5) xor data_in(6) xor data_in(7);
+  check(2) := data_in(7) xor data_in(6) xor data_in(5) xor data_in(4);
+  check(1) := data_in(7) xor data_in(6) xor data_in(3) xor data_in(2);
+  check(0) := data_in(7) xor data_in(5) xor data_in(3) xor data_in(1);
+  parity := data_in(0) xor data_in(1) xor data_in(2) xor data_in(3) xor data_in(4) xor data_in(5) xor data_in(6) xor data_in(7);
 
   check_value := to_integer(unsigned(check));
-  temp(6 downto 0) <= data_in(7 downto 1);
+  temp(6 downto 0) := data_in(7 downto 1);
 
   if check_value /= 0 and parity = '1' then
     print("przeklamanie na pozycji " & str(check_value));
     print("in : " & str(data_in));
-    temp(check_value-1) <= not temp(check_value-1);
+    temp(check_value-1) := not temp(check_value-1);
     print("out: " & str(temp));
   elsif check_value/= 0 and parity = '0' then
     print("przeklamanie na dwoch pozycjach ");
     print("dane : " & str(data_in));
   end if;
 
-  temp_out(3 downto 1) <= temp(6 downto 4);
-  temp_out(0) <= temp(2);
+  temp_out(3 downto 1) := temp(6 downto 4);
+  temp_out(0) := temp(2);
 
   data_out <= temp_out;
   --print("dc out: " & str(temp_out));

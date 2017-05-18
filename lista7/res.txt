@@ -1,48 +1,56 @@
-in : 1011 0
+in : 0000 0
 out: 0000
 
-in : 1011 1
-out: 1011
+in : 0001 1
+przeklamanie na dwoch pozycjach 
+dane : 01101111
+out: 0111
 
-in : 1011 2
-out: 1011
+in : 0010 2
+przeklamanie na dwoch pozycjach 
+dane : 01010011
+out: 0100
 
-in : 1011 3
-out: 1011
+in : 0011 3
+out: 0011
 
-in : 1011 4
-out: 1011
+in : 0100 4
+out: 0100
 
-in : 1011 5
-out: 1011
+in : 0101 5
+out: 0101
 
-in : 1011 6
-out: 1011
+in : 0110 6
+out: 0110
 
-in : 1011 7
-out: 1011
+in : 0111 7
+out: 0111
 
-in : 1011 8
-out: 1011
+in : 1000 8
+out: 1000
 
-in : 1011 9
-out: 1011
+in : 1001 9
+przeklamanie na dwoch pozycjach 
+dane : 11111001
+out: 1111
 
-in : 1011 10
-out: 1011
+in : 1010 10
+out: 1010
 
 in : 1011 11
 out: 1011
 
-in : 1011 12
-out: 1011
+in : 1100 12
+przeklamanie na dwoch pozycjach 
+dane : 10100011
+out: 1010
 
-in : 1011 13
-out: 1011
+in : 1101 13
+out: 1101
 
-in : 1011 14
-out: 1011
+in : 1110 14
+out: 1110
 
-in : 1011 15
-out: 1011
+in : 1111 15
+out: 1111
 

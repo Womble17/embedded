@@ -101,13 +101,13 @@ BEGIN
 		for i in 0 to 15
 		loop
       --wait for clk_period;
-      print("in : " & str(std_logic_vector(to_unsigned(11, data_in'length))) & " " & str(i));
-			data_in <= std_logic_vector(to_unsigned(11, data_in'length));
+      print("in : " & str(std_logic_vector(to_unsigned(i, data_in'length))) & " " & str(i));
+			data_in <= std_logic_vector(to_unsigned(i, data_in'length));
       --print("in : " & str(data_in));
-      wait for clk_period*3;
+      wait for clk_period;
       print("out: " & str(data_out));
 print("");
-      --wait for clk_period;
+      wait for clk_period;
 
 			  --assert data_in = data_out report "flip " & str(i) & " " & str(data_out);
 		end loop;

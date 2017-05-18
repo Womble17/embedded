@@ -16,7 +16,6 @@ entity lossy_channel is
 end lossy_channel;
 
 architecture Behavioral of lossy_channel is
-  signal temp_out  : std_logic_vector(7 downto 0) := (others => '0');
 
 	signal q_rand  : std_logic_vector(15 downto 0);
 	signal decision: std_logic_vector(2 downto 0);
@@ -39,8 +38,9 @@ randomizer: lfsr port map
   place1    <= q_rand(0) & q_rand(5) & q_rand(10);
   place2    <= q_rand(2) & q_rand(7) & q_rand(8);
 
-p1: process(clk)
+p1: process(data_in)
 variable counter : integer := 0;
+variable temp_out  : std_logic_vector(7 downto 0) := (others => '0');
 
 begin
 counter := counter +1;
@@ -53,25 +53,25 @@ counter := counter +1;
     for I in data_in'range loop
 		if I = to_integer(unsigned(place1))
 		then
-			temp_out(I) <= data_in(I);
+			temp_out(I) := not data_in(I);
 		else
-			temp_out(I) <= data_in(I);
+			temp_out(I) := data_in(I);
 		end if;
 	 end loop;
   elsif decision = "010"  -- decision to flip two bits
   then
     for I in data_in'range loop
-		if I = to_integer(unsigned(place1))
+		if I = 5--to_integer(unsigned(place1))
 		   or
-       I = to_integer(unsigned(place2))
+       I = 6--to_integer(unsigned(place2))
 		then
-			temp_out(I) <= data_in(I);
+			temp_out(I) := not data_in(I);
 		else
-			temp_out(I) <= data_in(I);
+			temp_out(I) := data_in(I);
 		end if;
 	 end loop;
   else
-	  temp_out <= data_in;
+	  temp_out := data_in;
   end if;
 --end if;
   data_out <= temp_out;

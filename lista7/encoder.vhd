@@ -13,12 +13,13 @@ end encoder;
 
 ARCHITECTURE Behavioral OF encoder IS
 
-  signal temp_out  : std_logic_vector(7 downto 0);
+
 
 BEGIN
 
 -- cyclic register with taps
-PROCESS(clk)
+PROCESS(data_in)
+variable temp_out  : std_logic_vector(7 downto 0);
 variable counter : integer := 0;
 
 BEGIN
@@ -27,12 +28,12 @@ counter := counter +1;
 --if counter mod 3 = 0 and work = '1'  then
   --print("en " & str(counter));
 
-	temp_out(7 downto 5) <= data_in(3 downto 1);
-	temp_out(3) <= data_in(0);
-  temp_out(1) <= data_in(0) xor data_in(1) xor data_in(3);
-  temp_out(2) <= data_in(0) xor data_in(2) xor data_in(3);
-  temp_out(4) <= data_in(1) xor data_in(2) xor data_in(3);
-  temp_out(0) <= temp_out(1) xor temp_out(2) xor temp_out(3) xor temp_out(4) xor temp_out(5) xor temp_out(6) xor temp_out(7);
+	temp_out(7 downto 5) := data_in(3 downto 1);
+	temp_out(3) := data_in(0);
+  temp_out(1) := data_in(0) xor data_in(1) xor data_in(3);
+  temp_out(2) := data_in(0) xor data_in(2) xor data_in(3);
+  temp_out(4) := data_in(1) xor data_in(2) xor data_in(3);
+  temp_out(0) := temp_out(1) xor temp_out(2) xor temp_out(3) xor temp_out(4) xor temp_out(5) xor temp_out(6) xor temp_out(7);
 
   data_out <= temp_out;
   --print("en out: " & str(temp_out));
