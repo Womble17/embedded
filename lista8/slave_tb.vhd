@@ -44,14 +44,34 @@ ARCHITECTURE behavior OF slave_tb IS
 BEGIN
 
 	-- Instantiate the Unit Under Test (UUT)
-   uut: slave
-	GENERIC MAP (identifier => "10101010")
+  proc1: slave
+	GENERIC MAP (identifier => "00000001")
 	PORT MAP (
-          conn_bus => conn_bus,
-          clk => clk,
+       conn_bus => conn_bus,
+       clk => clk,
 			 state => state,
 			 vq => vq,
 			 vcurrent_cmd => current_cmd
+       );
+
+  proc2: slave
+  GENERIC MAP (identifier => "00000010")
+  PORT MAP (
+         conn_bus => conn_bus,
+         clk => clk,
+         state => state,
+         vq => vq,
+         vcurrent_cmd => current_cmd
+         );
+
+   proc3: slave
+   GENERIC MAP (identifier => "00000011")
+   PORT MAP (
+        conn_bus => conn_bus,
+        clk => clk,
+        state => state,
+        vq => vq,
+        vcurrent_cmd => current_cmd
         );
 
    -- Clock process definitions
@@ -70,7 +90,7 @@ BEGIN
       -- hold reset state for 100 ns.
       wait for 100 ns;
 
-      wait for clk_period*10;
+      --wait for clk_period*10;
 
 		-- address
 		--conn_bus <= "10101010";
@@ -97,32 +117,67 @@ BEGIN
 		-- other possible execution
 		wait for 3*clk_period;
 		-- address
-		conn_bus <= "10101010";
+		conn_bus <= "00000011";
 		wait for clk_period;
 		-- CMD:
-		conn_bus <= "10000000";
+		conn_bus <= "00010000";
     wait for clk_period*2;
 
+    --sleep
+    conn_bus <= "11111111";
+    wait for clk_period;
 		--  operands
-		conn_bus <= "00000100";
+		conn_bus <= "00000001";
     wait for clk_period;
     conn_bus <= "00000001";
     wait for clk_period*2;
 
     -- address
-		conn_bus <= "10101010";
+		conn_bus <= "00000011";
 		wait for clk_period;
 		-- CMD: data_req
 		conn_bus <= "01000000";
 		wait for clk_period;
-		--conn_bus <= "ZZZZZZZZ";
-    --wait for clk_period;
+		conn_bus <= "ZZZZZZZZ";
+    wait for clk_period*2;
     print("bus: " & str(conn_bus));
 
+		wait for clk_period;
 
+    print("bus: " & str(conn_bus));
 
+		-- other possible execution
 		wait for 3*clk_period;
+		-- address
+		conn_bus <= "00000010";
+		wait for clk_period;
+		-- CMD: 
+		conn_bus <= "01010000";
+    wait for clk_period*2;
 
+    --sleep
+    conn_bus <= "11111111";
+    wait for clk_period;
+		--  operands
+		conn_bus <= "00000001";
+    wait for clk_period;
+    conn_bus <= "00000011";
+    wait for clk_period;
+    conn_bus <= "ZZZZZZZZ";
+
+    wait for clk_period*10;
+
+    -- address
+		conn_bus <= "00000011";
+		wait for clk_period;
+		-- CMD: data_req
+		conn_bus <= "01000000";
+		wait for clk_period;
+		conn_bus <= "ZZZZZZZZ";
+    wait for clk_period*2;
+    print("bus: " & str(conn_bus));
+
+		wait for clk_period;
 
 
       wait;
