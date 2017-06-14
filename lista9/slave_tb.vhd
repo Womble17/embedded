@@ -17,7 +17,7 @@ ARCHITECTURE behavior OF slave_tb IS
     COMPONENT RAM
     Port (
            clk          : in    STD_LOGIC;
-           print_mem    : in    STD_LOGIC;
+           debug        : in    STD_LOGIC;
            ram_mar      : in    STD_LOGIC_VECTOR (4 downto 0);
            bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
 			);
@@ -31,12 +31,25 @@ ARCHITECTURE behavior OF slave_tb IS
       );
     END COMPONENT;
 
+    COMPONENT AC
+    Port (
+           clk          : in    STD_LOGIC;
+           ac_in        : in STD_LOGIC_VECTOR (15 downto 0);
+           ac_out       : out STD_LOGIC_VECTOR (15 downto 0);
+           bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
+      );
+    END COMPONENT;
+
 
    --Inputs
    signal clk       : std_logic := '0';
-   signal print_mem : std_logic := '0';
+   signal debug     : std_logic := '0';
    signal ram_mar   : std_logic_vector(4 downto 0) := (others => '0');
    signal bus_data  : std_logic_vector(15 downto 0) := (others => '1');
+   signal ac_in     : std_logic_vector(15 downto 0) := (others => '1');
+   signal ac_out    : std_logic_vector(15 downto 0) := (others => '1');
+   signal alu_in    : std_logic_vector(15 downto 0) := (others => '1');
+   signal alu_out   : std_logic_vector(15 downto 0) := (others => '1');
 
    -- Clock period definitions
    constant clk_period : time := 20 ns;
@@ -48,13 +61,21 @@ BEGIN
 	PORT MAP (
     ram_mar => ram_mar,
 		clk => clk,
-    print_mem => print_mem,
+    debug => debug,
 		bus_data => bus_data
   );
 
   address_reg : MAR
   PORT MAP (
     ram_mar => ram_mar,
+    clk => clk,
+    bus_data => bus_data
+  );
+
+  accumulator_reg : AC
+  PORT MAP (
+    ac_in => ac_in,
+    ac_out => ac_out,
     clk => clk,
     bus_data => bus_data
   );
@@ -75,7 +96,7 @@ BEGIN
    begin
       --bus_data <= "0010000000000000";
       wait for 200 ns;
-      --print_mem <= '1';
+      --debug <= '1';
       bus_data <= "0000100000000000";
       wait for clk_period;
 

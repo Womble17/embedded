@@ -1,6 +1,7 @@
 all:
 	ghdl -a vhdl_txt.vhd
 	ghdl -a std_logic_textio.vhd
+	ghdl -a AC.vhd
 	ghdl -a ram.vhd
 	ghdl -a MAR.vhd
 	ghdl -a slave_tb.vhd

@@ -1,2 +1,3 @@
 ghdl -r slave_tb --vcd=slave_tb.vcd --stop-time=2000ns
 RAM: SET DATA
+AC: SET DATA

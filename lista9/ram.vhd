@@ -9,7 +9,7 @@ use work.std_logic_textio.all;
 entity RAM is
     Port (
            clk          : in    STD_LOGIC;
-           print_mem    : in    STD_LOGIC;
+           debug        : in    STD_LOGIC;
            ram_mar      : in    STD_LOGIC_VECTOR (4 downto 0);
            bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
 			);
@@ -30,7 +30,7 @@ architecture Behavioral of RAM is
   signal current_s : state_type := IDLE;
   signal next_s : state_type := IDLE;
 
-  type cmd_type is (NOP, LOAD, STORE);
+  type cmd_type is (nop, load, store);
   signal current_cmd : cmd_type := NOP;
 
   signal q : std_logic_vector (15 downto 0) := (others => '1');
@@ -64,19 +64,19 @@ begin
         cmd := q(12 downto 10);
         case cmd is
           when "001" =>
-            current_cmd <= LOAD;
+            current_cmd <= load;
             next_s <= GET_DATA;
           when "010" =>
-            current_cmd <= STORE;
+            current_cmd <= store;
             next_s <= SET_DATA;
     			when "011" =>
-            current_cmd <= LOAD;
+            current_cmd <= load;
             next_s <= GET_DATA;
           when "100" =>
-            current_cmd <= LOAD;
+            current_cmd <= load;
             next_s <= GET_DATA;
 
-    			when others => current_cmd <= NOP;
+    			when others => current_cmd <= nop;
     		end case;
       else
         next_s <= IDLE;
@@ -116,7 +116,7 @@ end process;
     wait;
   end process;
 
-  print_memory : process(print_mem)
+  print_memory : process(debug)
   variable ctr : integer := 0;
   begin
     if ctr > 0 then

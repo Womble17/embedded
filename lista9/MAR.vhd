@@ -43,7 +43,7 @@ begin
     when IDLE =>
       --print("MAR: IDLE");
       if q(15 downto 13) = "001" then
-        print("MAR: IDLE");
+        --print("MAR: IDLE");
         ram_mar <= q(12 downto 8);
       end if;
 
