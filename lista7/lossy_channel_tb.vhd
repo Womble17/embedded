@@ -63,7 +63,7 @@ BEGIN
     work => work,
     data_in => data_in,
     data_out => encoder_data_out
-    );
+  );
 
   lc: lossy_channel
   PORT MAP (
@@ -71,15 +71,15 @@ BEGIN
     work => work,
     data_in => encoder_data_out,
     data_out => decoder_data_in
-    );
+  );
 
   dec: decoder
   PORT MAP (
-   clk => clk,
-   work => work,
-   data_in => decoder_data_in,
-   data_out => data_out
-   );
+    clk => clk,
+    work => work,
+    data_in => decoder_data_in,
+    data_out => data_out
+  );
 
    -- Clock process definitions
    clk_process :process

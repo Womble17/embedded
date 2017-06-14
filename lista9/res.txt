@@ -1,0 +1,19 @@
+ghdl -r slave_tb --vcd=slave_tb.vcd --stop-time=2000ns
+0
+1
+2
+4
+8
+16
+32
+32768
+0
+1
+2
+4
+8
+16
+32
+32768
+0
+RAM: SET DATA
