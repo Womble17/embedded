@@ -17,6 +17,7 @@ ARCHITECTURE behavior OF slave_tb IS
     COMPONENT RAM
     Port (
            clk          : in    STD_LOGIC;
+           print_mem    : in    STD_LOGIC;
            ram_mar      : in    STD_LOGIC_VECTOR (4 downto 0);
            bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
 			);
@@ -33,6 +34,7 @@ ARCHITECTURE behavior OF slave_tb IS
 
    --Inputs
    signal clk       : std_logic := '0';
+   signal print_mem : std_logic := '0';
    signal ram_mar   : std_logic_vector(4 downto 0) := (others => '0');
    signal bus_data  : std_logic_vector(15 downto 0) := (others => '1');
 
@@ -46,6 +48,7 @@ BEGIN
 	PORT MAP (
     ram_mar => ram_mar,
 		clk => clk,
+    print_mem => print_mem,
 		bus_data => bus_data
   );
 
@@ -72,9 +75,10 @@ BEGIN
    begin
       --bus_data <= "0010000000000000";
       wait for 200 ns;
-
+      --print_mem <= '1';
       bus_data <= "0000100000000000";
       wait for clk_period;
+
       bus_data <= "ZZZZZZZZZZZZZZZZ";
       wait for clk_period;
       --print(str(to_integer(unsigned(bus_data))));

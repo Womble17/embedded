@@ -9,6 +9,7 @@ use work.std_logic_textio.all;
 entity RAM is
     Port (
            clk          : in    STD_LOGIC;
+           print_mem    : in    STD_LOGIC;
            ram_mar      : in    STD_LOGIC_VECTOR (4 downto 0);
            bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
 			);
@@ -115,11 +116,11 @@ end process;
     wait;
   end process;
 
-  print_mem : process(clk)
+  print_memory : process(print_mem)
   variable ctr : integer := 0;
   begin
-    if ctr = 20 then
-      for j in 0 to 16 loop
+    if ctr > 0 then
+      for j in 0 to 31 loop
         print(str(to_integer(unsigned(memory(j)))));
       end loop;
     end if;
