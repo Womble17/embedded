@@ -18,7 +18,7 @@ end AC;
 
 architecture Behavioral of AC is
 
-  type state_type is (IDLE, SLEEP, GET_ALU, GET_BUS);
+  type state_type is (IDLE, SLEEP, GET_ALU, GET_BUS, SEND_TO_BUS);
   signal current_s : state_type := IDLE;
   signal next_s : state_type := IDLE;
 
@@ -27,6 +27,7 @@ architecture Behavioral of AC is
 
   signal q    : std_logic_vector (15 downto 0) := (others => '0');
   signal data : std_logic_vector (15 downto 0) := (others => '0');
+  signal sending     : std_logic := '0';
 
 begin
 
@@ -53,7 +54,7 @@ begin
       --print("RAM: IDLE");
 
       adr := q(15 downto 13);
-      if adr = "000" then
+      if adr = "001" then
 
         cmd := q(12 downto 10);
         case cmd is
@@ -75,13 +76,21 @@ begin
 
           when others => current_cmd <= nop;
         end case;
+      elsif adr = "110" then
+        next_s <= SEND_TO_BUS;
       else
         next_s <= IDLE;
       end if;
+      sending <= '0';
 
     when GET_BUS =>
       print("AC: GET_BUS");
       data <= bus_data;
+      next_s <= IDLE;
+
+    when SEND_TO_BUS =>
+      print("AC: SEND TO BUS");
+      sending <= '1';
       next_s <= IDLE;
 
     when GET_ALU =>
@@ -106,6 +115,7 @@ begin
   end case;
   end process;
 
+bus_data <= data when sending = '1' else "ZZZZZZZZZZZZZZZZ";
 ac_out <= data;
 
 end Behavioral;

@@ -5,6 +5,7 @@ all:
 	ghdl -a ALU.vhd
 	ghdl -a RAM.vhd
 	ghdl -a MAR.vhd
+	ghdl -a OUTREG.vhd
 	ghdl -a slave_tb.vhd
 
 	ghdl -e slave_tb

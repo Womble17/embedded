@@ -49,6 +49,13 @@ ARCHITECTURE behavior OF slave_tb IS
       );
     END COMPONENT;
 
+    COMPONENT OUTREG
+    Port (
+           clk          : in    STD_LOGIC;
+           bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
+      );
+    END COMPONENT;
+
 
    --Inputs
    signal clk           : std_logic := '0';
@@ -76,6 +83,12 @@ BEGIN
   address_reg : MAR
   PORT MAP (
     ram_mar => ram_mar,
+    clk => clk,
+    bus_data => bus_data
+  );
+
+  output_reg : OUTREG
+  PORT MAP (
     clk => clk,
     bus_data => bus_data
   );
@@ -113,33 +126,33 @@ BEGIN
       wait for 200 ns;
       --debug <= '1';
 
-      --MAR <- new address
-      bus_data <= "0010010000000000";
+      --MAR <- command load + address
+      bus_data <= "0010010000000010";
       wait for clk_period;
 
-      --RAM command = load
-      bus_data <= "0000010000000000";
-      wait for clk_period;
       bus_data <= "ZZZZZZZZZZZZZZZZ";
       wait for clk_period*2;
-      --MAR <- new address
-      bus_data <= "0010000100000000";
-      wait for clk_period;
 
-      --RAM command = add
-      bus_data <= "0000110000000000";
+      --MAR <- command add + address
+      bus_data <= "0010110000000001";
       wait for clk_period;
       bus_data <= "ZZZZZZZZZZZZZZZZ";
       wait for clk_period*2;
 
 
-      print(str(to_integer(unsigned(bus_data))));
+      --print(str(to_integer(unsigned(bus_data))));
       wait for clk_period;
-      print(str(to_integer(unsigned(alu_in_ac_out))));
+      bus_data <= "1100000000000000";
+
+      --print(str(to_integer(unsigned(alu_in_ac_out))));
       wait for clk_period;
-      print(str(to_integer(unsigned(alu_in_ac_out))));
+
+      bus_data <= "ZZZZZZZZZZZZZZZZ";
+
+      --print(str(to_integer(unsigned(alu_in_ac_out))));
       wait for clk_period;
-      print(str(to_integer(unsigned(alu_in_ac_out))));
+
+      --print(str(to_integer(unsigned(alu_in_ac_out))));
 
 
 

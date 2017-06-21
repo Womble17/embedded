@@ -26,7 +26,7 @@ architecture Behavioral of RAM is
   signal bin_value : std_logic_vector(15 downto 0):=X"0000";
 
 
-  type state_type is (IDLE, SET_DATA, GET_DATA);
+  type state_type is (IDLE, DATA_INTPUT, DATA_OUTPUT, SLEEP);
   signal current_s : state_type := IDLE;
   signal next_s : state_type := IDLE;
 
@@ -52,6 +52,7 @@ begin
   nextstate: process(current_s,q)
     variable adr : std_logic_vector(2 downto 0) := "000";
     variable cmd : std_logic_vector(2 downto 0) := "000";
+    variable sleep_counter : integer := 0;
 
   begin
   case current_s is
@@ -60,22 +61,22 @@ begin
       --print("RAM: IDLE");
 
       adr := q(15 downto 13);
-      if adr = "000" then
+      if adr = "001" then
 
         cmd := q(12 downto 10);
         case cmd is
           when "001" => --load
             current_cmd <= load;
-            next_s <= GET_DATA;
+            next_s <= DATA_OUTPUT;
           when "010" => --store
             current_cmd <= store;
-            next_s <= SET_DATA;
+            next_s <= DATA_INTPUT;
     			when "011" =>  --add
             current_cmd <= load;
-            next_s <= GET_DATA;
+            next_s <= DATA_OUTPUT;
           when "100" => --substract
             current_cmd <= load;
-            next_s <= GET_DATA;
+            next_s <= DATA_OUTPUT;
 
     			when others => current_cmd <= nop;
     		end case;
@@ -85,14 +86,22 @@ begin
       sending <= '0';
       writing <= '0';
 
-    when SET_DATA =>
+    when DATA_INTPUT =>
       print("RAM: SET DATA");
       next_s <= IDLE;
 
-    when GET_DATA =>
-      print("RAM: GET DATA");
+    when DATA_OUTPUT =>
+      print("RAM: DATA_OUTPUT");
       sending <= '1';
       next_s <= IDLE;
+
+    when SLEEP =>
+      print("MAR SLEEP: " & str(sleep_counter));
+      sleep_counter := sleep_counter - 1;
+
+      if sleep_counter = 0 then
+        next_s <= IDLE;
+      end if;
 
   end case;
 end process;

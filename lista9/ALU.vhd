@@ -51,7 +51,7 @@ begin
       --print("RAM: IDLE");
 
       adr := q(15 downto 13);
-      if adr = "000" then
+      if adr = "001" then
 
         cmd := q(12 downto 10);
         case cmd is

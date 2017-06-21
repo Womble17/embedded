@@ -9,8 +9,6 @@ entity controller is
     generic ( identifier : std_logic_vector (7 downto 0) := "10101010" );
     Port (
         clk          : in  STD_LOGIC;
-			  IR           : inout STD_LOGIC_VECTOR (15 downto 0);
-			  PC           : inout std_logic_vector (15 downto 0);
 			  bus_data     : inout std_logic_vector (15 downto 0)
 			  );
 end controller;
@@ -18,7 +16,7 @@ end controller;
 architecture Behavioral of controller is
 
   -- statemachine definitions
-  type state_type is (IDLE, FETCH, DECODE, EXECUTE, STORE);
+  type state_type is (IDLE, FETCH, DECODE, EXECUTE, STORE, SLEEP);
   signal current_s : state_type := IDLE;
   signal next_s : state_type := IDLE;
 
@@ -44,7 +42,28 @@ end process;
 
 
 nextstate: process(current_s,q)
+  variable sleep_counter : integer := 0;
+begin
+case current_s is
 
+  when IDLE =>
+    --print("MAR: IDLE");
+    if q(15 downto 13) = "001" then
+      print("MAR: SET NEW ADDRESS " & str(q(4 downto 0)));
+      ram_mar <= q(4 downto 0);
+      sleep_counter := 2;
+      next_s <= SLEEP;
+    end if;
+
+  when SLEEP =>
+    print("MAR SLEEP: " & str(sleep_counter));
+    sleep_counter := sleep_counter - 1;
+
+    if sleep_counter = 0 then
+      next_s <= IDLE;
+    end if;
+
+end case;
 end process;
 
 
