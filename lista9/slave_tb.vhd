@@ -34,22 +34,30 @@ ARCHITECTURE behavior OF slave_tb IS
     COMPONENT AC
     Port (
            clk          : in    STD_LOGIC;
-           ac_in        : in STD_LOGIC_VECTOR (15 downto 0);
-           ac_out       : out STD_LOGIC_VECTOR (15 downto 0);
+           ac_in        : in    STD_LOGIC_VECTOR (15 downto 0);
+           ac_out       : out   STD_LOGIC_VECTOR (15 downto 0);
+           bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
+      );
+    END COMPONENT;
+
+    COMPONENT ALU
+    Port (
+           clk          : in    STD_LOGIC;
+           alu_in       : in    STD_LOGIC_VECTOR (15 downto 0);
+           alu_out      : out   STD_LOGIC_VECTOR (15 downto 0);
            bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
       );
     END COMPONENT;
 
 
    --Inputs
-   signal clk       : std_logic := '0';
-   signal debug     : std_logic := '0';
-   signal ram_mar   : std_logic_vector(4 downto 0) := (others => '0');
-   signal bus_data  : std_logic_vector(15 downto 0) := (others => '1');
-   signal ac_in     : std_logic_vector(15 downto 0) := (others => '1');
-   signal ac_out    : std_logic_vector(15 downto 0) := (others => '1');
-   signal alu_in    : std_logic_vector(15 downto 0) := (others => '1');
-   signal alu_out   : std_logic_vector(15 downto 0) := (others => '1');
+   signal clk           : std_logic := '0';
+   signal clk_run       : std_logic := '1';
+   signal debug         : std_logic := '0';
+   signal ram_mar       : std_logic_vector(4 downto 0) := (others => '0');
+   signal bus_data      : std_logic_vector(15 downto 0) := (others => '1');
+   signal alu_in_ac_out : std_logic_vector(15 downto 0) := (others => '1');
+   signal alu_out_ac_in : std_logic_vector(15 downto 0) := (others => '1');
 
    -- Clock period definitions
    constant clk_period : time := 20 ns;
@@ -74,20 +82,27 @@ BEGIN
 
   accumulator_reg : AC
   PORT MAP (
-    ac_in => ac_in,
-    ac_out => ac_out,
+    ac_in => alu_out_ac_in,
+    ac_out => alu_in_ac_out,
     clk => clk,
     bus_data => bus_data
   );
 
+  arithmetic_logic_unit : ALU
+  PORT MAP (
+    alu_in => alu_in_ac_out,
+    alu_out => alu_out_ac_in,
+    clk => clk,
+    bus_data => bus_data
+  );
 
    -- Clock process definitions
    clk_process :process
    begin
-		clk <= '0';
-		wait for clk_period/2;
-		clk <= '1';
-		wait for clk_period/2;
+     if clk_run = '1' then	clk <= '0'; end if;
+		 wait for clk_period/2;
+     if clk_run = '1' then	clk <= '1'; end if;
+     wait for clk_period/2;
    end process;
 
 
@@ -97,14 +112,34 @@ BEGIN
       --bus_data <= "0010000000000000";
       wait for 200 ns;
       --debug <= '1';
-      bus_data <= "0000100000000000";
+
+      --MAR <- new address
+      bus_data <= "0010010000000000";
       wait for clk_period;
 
+      --RAM command = load
+      bus_data <= "0000010000000000";
+      wait for clk_period;
       bus_data <= "ZZZZZZZZZZZZZZZZ";
+      wait for clk_period*2;
+      --MAR <- new address
+      bus_data <= "0010000100000000";
       wait for clk_period;
-      --print(str(to_integer(unsigned(bus_data))));
+
+      --RAM command = add
+      bus_data <= "0000110000000000";
+      wait for clk_period;
+      bus_data <= "ZZZZZZZZZZZZZZZZ";
+      wait for clk_period*2;
 
 
+      print(str(to_integer(unsigned(bus_data))));
+      wait for clk_period;
+      print(str(to_integer(unsigned(alu_in_ac_out))));
+      wait for clk_period;
+      print(str(to_integer(unsigned(alu_in_ac_out))));
+      wait for clk_period;
+      print(str(to_integer(unsigned(alu_in_ac_out))));
 
 
 

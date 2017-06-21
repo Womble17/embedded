@@ -1,0 +1,2 @@
+../../src/ieee/numeric_std-body.v93:2098:7:@260ns:(assertion warning): NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+./slave_tb:info: simulation stopped by --stop-time

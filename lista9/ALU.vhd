@@ -6,19 +6,19 @@ use std.textio.all;
 Use work.txt_util.ALL;
 use work.std_logic_textio.all;
 
-entity AC is
+entity ALU is
     Port (
            clk          : in    STD_LOGIC;
-           alu_in       : in STD_LOGIC_VECTOR (15 downto 0);
-           alu_out      : out STD_LOGIC_VECTOR (15 downto 0);
+           alu_in       : in    STD_LOGIC_VECTOR (15 downto 0);
+           alu_out      : out   STD_LOGIC_VECTOR (15 downto 0);
            bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
 			);
-end AC;
+end ALU;
 
 
-architecture Behavioral of AC is
+architecture Behavioral of ALU is
 
-  type state_type is (IDLE, SLEEP, SET_DATA, GET_DATA);
+  type state_type is (IDLE, SLEEP, EXEC_ADD, EXEC_SUB);
   signal current_s : state_type := IDLE;
   signal next_s : state_type := IDLE;
 
@@ -57,16 +57,18 @@ begin
         case cmd is
           when "001" =>
             current_cmd <= load;
-            next_s <= GET_DATA;
+            next_s <= IDLE;
           when "010" =>
             current_cmd <= store;
-            next_s <= SET_DATA;
+            next_s <= IDLE;
           when "011" =>
             current_cmd <= add;
-            next_s <= IDLE;
+            sleep_counter := 1;
+            next_s <= SLEEP;
           when "100" =>
             current_cmd <= subt;
-            next_s <= IDLE;
+            sleep_counter := 1;
+            next_s <= SLEEP;
 
           when others => current_cmd <= nop;
         end case;
@@ -74,19 +76,27 @@ begin
         next_s <= IDLE;
       end if;
 
-    when SET_DATA =>
-      print("RAM: SET DATA");
+    when EXEC_ADD =>
+      print("ALU: EXEC_ADD");
+      alu_out <= std_logic_vector(unsigned(alu_in) + unsigned(bus_data));
       next_s <= IDLE;
 
-    when GET_DATA =>
-      print("RAM: GET DATA");
+    when EXEC_SUB =>
+      print("ALU: EXEC_SUB");
+      alu_out <= std_logic_vector(unsigned(alu_in) - unsigned(bus_data));
       next_s <= IDLE;
 
-    when SLEEP =>
-      sleep_counter := sleep_counter - 1;
-      if sleep_counter = 0 then
-        next_s <= IDLE;
-      end if;
+      when SLEEP =>
+        sleep_counter := sleep_counter - 1;
+        if sleep_counter = 0 then
+          case current_cmd is
+            when add =>
+              next_s <= EXEC_ADD;
+            when subt =>
+              next_s <= EXEC_SUB;
+            when others => next_s <= IDLE;
+          end case;
+        end if;
 
   end case;
   end process;
