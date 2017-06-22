@@ -42,7 +42,7 @@ begin
 
     when IDLE =>
       --print("MAR: IDLE");
-      if q(15 downto 13) = "001" then
+      if q(15 downto 13) = "111" then
         print("MAR: SET NEW ADDRESS " & str(q(4 downto 0)) & " " & str(to_integer(unsigned(q(4 downto 0)))));
         ram_mar <= q(4 downto 0);
         sleep_counter := 1;

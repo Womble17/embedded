@@ -54,7 +54,7 @@ begin
       --print("RAM: IDLE");
 
       adr := q(15 downto 13);
-      if adr = "001" then
+      if adr = "111" then
 
         cmd := q(12 downto 10);
         case cmd is
@@ -90,6 +90,7 @@ begin
 
     when SEND_TO_BUS =>
       print("AC: SEND TO BUS");
+      print("AC: " & str(data));
       sending <= '1';
       next_s <= IDLE;
 

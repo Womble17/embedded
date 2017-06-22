@@ -30,7 +30,7 @@ architecture Behavioral of RAM is
   signal current_s : state_type := IDLE;
   signal next_s : state_type := IDLE;
 
-  type cmd_type is (nop, load, store);
+  type cmd_type is (nop, load, store, load_instr);
   signal current_cmd : cmd_type := NOP;
 
   signal q : std_logic_vector (15 downto 0) := (others => '1');
@@ -61,7 +61,7 @@ begin
       --print("RAM: IDLE");
 
       adr := q(15 downto 13);
-      if adr = "001" then
+      if adr = "111" then
 
         cmd := q(12 downto 10);
         case cmd is
@@ -76,6 +76,9 @@ begin
             next_s <= DATA_OUTPUT;
           when "100" => --substract
             current_cmd <= load;
+            next_s <= DATA_OUTPUT;
+          when "111" => --load instruction
+            current_cmd <= load_instr;
             next_s <= DATA_OUTPUT;
 
     			when others => current_cmd <= nop;

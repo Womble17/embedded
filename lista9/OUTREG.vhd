@@ -44,13 +44,17 @@ begin
 
     when IDLE =>
       --print("OUTREG: IDLE");
-      if q(15 downto 13) = "001" then
+      if q(15 downto 13) = "111" then
         sleep_counter := 1;
         next_s <= SLEEP;
       elsif q(15 downto 13) = "110" then
-        sleep_counter := 1;
-        next_s <= SLEEP;
-        prnt <= '1';
+        if q(0) = '1' then
+          next_s <= IDLE;
+        else
+          sleep_counter := 1;
+          next_s <= SLEEP;
+          prnt <= '1';
+        end if;
 
       end if;
 

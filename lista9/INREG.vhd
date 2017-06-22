@@ -6,17 +6,17 @@ use std.textio.all;
 Use work.txt_util.ALL;
 use work.std_logic_textio.all;
 
-entity OUTREG is
+entity INREG is
     Port (
            clk          : in    STD_LOGIC;
-           bus_data     : inout STD_LOGIC_VECTOR (15 downto 0)
-           clk_run      : inout STD_LOGIC_VECTOR (15 downto 0)
+           bus_data     : inout STD_LOGIC_VECTOR (15 downto 0);
+           clk_run      : inout STD_LOGIC
 
 			);
-end OUTREG;
+end INREG;
 
 
-architecture Behavioral of OUTREG is
+architecture Behavioral of INREG is
 
   type state_type is (IDLE, SLEEP, SEND_TO_BUS, READ_STDIN);
   signal current_s : state_type := IDLE;
@@ -26,7 +26,7 @@ architecture Behavioral of OUTREG is
   signal data : std_logic_vector (15 downto 0) := (others => '0');
   signal sending     : std_logic := '0';
 
-  signal prnt : std_logic := '0';
+  signal stop_clock : std_logic := '0';
 
 begin
 
@@ -43,33 +43,29 @@ begin
 
   nextstate: process(current_s,q)
     variable sleep_counter : integer := 0;
+    variable st : string(15 to 0);
 
   begin
   case current_s is
 
     when IDLE =>
-      --print("OUTREG: IDLE");
-      if q(15 downto 13) = "001" then
+      --print("INTREG: IDLE");
+      if q(15 downto 13) = "111" then
         sleep_counter := 1;
         next_s <= SLEEP;
       elsif q(15 downto 13) = "101" then
-        sleep_counter := 1;
         next_s <= READ_STDIN;
-        prnt <= '1';
 
       end if;
       sending <= '0';
+      stop_clock <= '0';
 
     when SLEEP =>
       print("INREG SLEEP: " & str(sleep_counter));
       sleep_counter := sleep_counter - 1;
 
       if sleep_counter = 0 then
-        if prnt = '0' then
-          next_s <= IDLE;
-        else
-          next_s <= PRINT_DATA;
-        end if;
+        next_s <= IDLE;
       end if;
 
 
@@ -80,7 +76,9 @@ begin
 
     when READ_STDIN =>
       print("INREG READ_STDIN: ");
-      prnt <= '0';
+      clk_run <= '0';
+      str_read(input, st);
+      print("READ LINE: " & st);
       next_s <= IDLE;
 
 
@@ -88,5 +86,6 @@ begin
 end process;
 
 bus_data <= data when sending = '1' else "ZZZZZZZZZZZZZZZZ";
+--clk_run <= '0' when stop_clock = '1' else 'Z';
 
 end Behavioral;

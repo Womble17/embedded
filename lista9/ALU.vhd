@@ -51,7 +51,7 @@ begin
       --print("RAM: IDLE");
 
       adr := q(15 downto 13);
-      if adr = "001" then
+      if adr = "111" then
 
         cmd := q(12 downto 10);
         case cmd is
@@ -78,12 +78,12 @@ begin
 
     when EXEC_ADD =>
       print("ALU: EXEC_ADD");
-      alu_out <= std_logic_vector(unsigned(alu_in) + unsigned(bus_data));
+      alu_out <= std_logic_vector(signed(alu_in) + signed(bus_data));
       next_s <= IDLE;
 
     when EXEC_SUB =>
       print("ALU: EXEC_SUB");
-      alu_out <= std_logic_vector(unsigned(alu_in) - unsigned(bus_data));
+      alu_out <= std_logic_vector(signed(alu_in) - signed(bus_data));
       next_s <= IDLE;
 
       when SLEEP =>
